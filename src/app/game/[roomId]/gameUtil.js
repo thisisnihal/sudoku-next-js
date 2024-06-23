@@ -31,13 +31,35 @@ export function isValidSudoku(board) {
   return true;
 }
 
+export function dependentCells(row, col) {
+  const dependentCellsArray = Array.from({ length: 9 }, () =>
+    Array.from({ length: 9 }, () => false)
+  );
+
+  const BOARD_SIZE = 9;
+  for (let i = 0; i < BOARD_SIZE; i++) {
+    dependentCellsArray[i][col] = true;
+    dependentCellsArray[row][i] = true;
+  }
+
+  let r = row - (row % 3);
+  let c = col - (col % 3);
+  for (let i = r; i < r + 3; i++) {
+    for (let j = c; j < c + 3; j++) {
+      dependentCellsArray[i][j] = true;
+    }
+  }
+  dependentCellsArray[row][col] = false;
+  return dependentCellsArray;
+}
+
 function isValid(board, row, col, num) {
   for (let i = 0; i < 9; ++i) {
     if (board[row][i] === num || board[i][col] === num) {
       return false;
     }
   }
-  const startRow =  row - (row % 3);
+  const startRow = row - (row % 3);
   const startCol = col - (col % 3);
   for (let i = startRow; i < startRow + 3; ++i) {
     for (let j = startCol; j < startCol + 3; ++j) {
@@ -161,9 +183,8 @@ function removeNumbers(board, difficulty) {
 }
 
 export function generateSudoku(difficulty) {
+  if (difficulty > 60) difficulty = 60;
 
- if (difficulty > 60) difficulty = 60;
- 
   const fullBoard = generateFullSudoku();
   const solvedBoard = fullBoard.map((row) => [...row]);
   const puzzleBoard = removeNumbers(fullBoard, difficulty);
@@ -190,3 +211,30 @@ export function generateSudoku(difficulty) {
 //     console.log(formatSudoku(sudokuPuzzle[1]));
 //     rl.close();
 // });
+
+export const sounds = (() => {
+  const correct = new Audio("/sounds/click1.mp3");
+  const wrong = new Audio("/sounds/wrong2.mp3");
+  const erase = new Audio("/sounds/erase.mp3");
+
+  function playCorrect() {
+    correct.currentTime = 0;
+    correct
+      .play()
+      .catch((error) => console.error("Error playing sound:", error));
+  }
+  function playWrong() {
+    wrong.currentTime = 0;
+    wrong.play().catch((error) => console.error("Error playing sound:", error));
+  }
+  function playErase() {
+    erase.currentTime = 0;
+    erase.play().catch((error) => console.error("Error playing sound:", error));
+  }
+
+  return {
+    playCorrect,
+    playWrong,
+    playErase,
+  };
+})();

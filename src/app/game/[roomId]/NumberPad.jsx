@@ -9,7 +9,7 @@ const NumberPad = () => {
     setBoard,
     solutionBoard,
     pencilMode,
-    updateNumPressed,
+    updatePressedNumber,
   } = useSudoku();
 
   const hasZero = (_board) => {
@@ -28,29 +28,8 @@ const NumberPad = () => {
   };
 
   const handleNumberClick = (number) => {
-    if (selectedCell && pencilMode) {
-      updateNumPressed(number);
-    } else if (selectedCell) {
-      updateNumPressed(0);
-      let audio;
-      const newBoard = deepCopy2DArray(board);
-      const [row, col] = [selectedCell.row, selectedCell.col];
-      if (newBoard[row][col] === number) {
-        newBoard[row][col] = 0;
-        audio = new Audio("/sounds/erase.mp3");
-      } else {
-        newBoard[row][col] = number;
-        if (isValidMove(newBoard, number, row, col)) {
-          audio = new Audio("/sounds/click1.mp3");
-        } else {
-          audio = new Audio("/sounds/wrongClick1.mp3");
-        }
-      }
-      setBoard(newBoard);
-      audio.play();
-      if (!hasZero(newBoard) && isSolved(newBoard)) {
-        console.log("you win !!");
-      }
+    if (selectedCell) {
+      updatePressedNumber(number);
     }
   };
 
@@ -59,7 +38,7 @@ const NumberPad = () => {
       {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
         <button
           key={num}
-          onClick={() => handleNumberClick(num)}
+          onClick={() => selectedCell && updatePressedNumber(num)}
           className="number-button"
         >
           {num}

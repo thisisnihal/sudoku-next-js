@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState } from "react";
 const SudokuContext = createContext();
 
 export const SudokuProvider = ({ children }) => {
-  const [initialBoard, setInitialBoard] = useState([]);
+  const [fillable, setFillable] = useState([]);
   const [board, setBoard] = useState([]);
   const [solutionBoard, setSolutionBoard] = useState([]);
   const [selectedCell, setSelectedCell] = useState(null);
@@ -12,7 +12,7 @@ export const SudokuProvider = ({ children }) => {
 
   const togglePencilMode = () => setPencilMode((prev) => !prev);
 
-  const [numPressed, setNumPressed] = useState([false, 0]);
+  const [PressedNumber, setPressedNumber] = useState([0, false]);
 
   const updateBoard = (newBoard) => {
     setBoard(newBoard);
@@ -22,31 +22,34 @@ export const SudokuProvider = ({ children }) => {
     setSelectedCell({ row, col });
   };
 
-  const updateNumPressed = (num) => {
-    setNumPressed((prev) => {
-      let newNumPressed = [...prev];
-
-      newNumPressed = [!prev[0], num];
-      return newNumPressed;
+  const updatePressedNumber = (num) => {
+    setPressedNumber((prev) => {
+      const newPressedNumber = [num, !prev];
+      return newPressedNumber;
     });
+  };
+  const getPressedNumber = () => {
+    return PressedNumber[0];
   };
 
   const contextValue = {
-    initialBoard,
-    setInitialBoard,
+    fillable,
+    setFillable,
     board,
     setBoard,
+    updateBoard,
     solutionBoard,
     setSolutionBoard,
     selectedCell,
     setSelectedCell,
-    updateBoard,
     updateSelectedCell,
     pencilMode,
     setPencilMode,
     togglePencilMode,
-    numPressed,
-    updateNumPressed,
+
+    PressedNumber,
+    getPressedNumber,
+    updatePressedNumber,
   };
 
   return (

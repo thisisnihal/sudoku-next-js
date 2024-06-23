@@ -1,77 +1,95 @@
 import React, { useEffect, useState } from "react";
 import { useSudoku } from "../../../../context/SudokuContext";
-import { isValidMove } from "./gameUtil";
+import { isValidMove, sounds } from "./gameUtil";
 import "./SudokuBoard.css";
 
 const Cell = ({ num, rowIndex, colIndex }) => {
   const {
     board,
-    initialBoard,
+    updateBoard,
+    solutionBoard,
+    fillable,
     selectedCell,
     updateSelectedCell,
     pencilMode,
-    numPressed,
-    setPencilMode,
+    PressedNumber,
+    getPressedNumber,
   } = useSudoku();
-  const isFillable = initialBoard[rowIndex][colIndex] === 0;
+  const isFillable = fillable[rowIndex][colIndex];
 
-  const [isThisSelected, setIsThisSelected] = useState(false);
-  const [pencilArray, setPencilArray] = useState(
+  const [pencilCellArray, setPencilCellArray] = useState(
     Array.from({ length: 9 }, (_, index) => 0)
   );
-  const [showHighlightCell, setshowHighlightCell] = useState(false);
+
+  const [isThisSelected, setIsThisSelected] = useState(false);
+  const [showPencilCell, setShowPencilCell] = useState(false);
 
   useEffect(() => {
-   
-  }, [isThisSelected]);
+    setShowPencilCell(num === 0 && pencilCellArray.some((val) => val !== 0));
+  }, [pencilCellArray]);
 
+  const classNames = (...classes) => classes.filter(Boolean).join(" ");
 
   useEffect(() => {
     setIsThisSelected(
       selectedCell?.row === rowIndex && selectedCell?.col === colIndex
     );
+  }, [selectedCell]);
 
-    setshowHighlightCell(() => {
-      return pencilArray.some((val) => val !== 0);
-    });
-    
-    
-  }, [selectedCell, pencilArray]);
-
-useEffect(() => {
-  setPencilMode((prev) => {
-    if (isThisSelected && showHighlightCell) return true;
-    else if (showHighlightCell) return showHighlightCell;
-    else if (prev) return true;
-    return showHighlightCell;
-  });
-}, [isThisSelected, showHighlightCell])
-
-
-  const classNames = (...classes) => {
-    return classes.filter(Boolean).join(" ");
+  const copyBoard = (arr) => {
+    return arr.map((row) => [...row]);
   };
 
-  const handlePencilInput = () => {
-    if (isFillable) updateSelectedCell(rowIndex, colIndex);
+  const resetPencilArray = () => {
+    const newpencilCellArray = [...pencilCellArray];
+    for (let i = 0; i < newpencilCellArray.length; i++) {
+      newpencilCellArray[i] = 0;
+    }
+    setPencilCellArray(newpencilCellArray);
   };
 
   useEffect(() => {
-    if (isThisSelected) {
-      const num = numPressed[1];
-      const newPencilArray = [...pencilArray];
-      if (num === 0) {
-        for (let i = 0; i < newPencilArray.length; i++) {
-          newPencilArray[i] = 0;
-        }
-      } else if (newPencilArray[num - 1] === num) {
-        newPencilArray[num - 1] = 0;
-      } else {
-        newPencilArray[num - 1] = newPencilArray[num - 1] === 0 ? num : 0;
-      }
-      setPencilArray(newPencilArray);
+    const num = getPressedNumber();
+    if (!selectedCell || !isThisSelected) return;
+
+    const [row, col] = [selectedCell.row, selectedCell.col];
+
+    if (pencilMode) {
+      handlePencilMode(num);
+    } else {
+      handleNormalMode(num, row, col);
     }
-  }, [numPressed]);
+  }, [PressedNumber]);
+
+  const handlePencilMode = (num) => {
+    const newPencilCellArray = [...pencilCellArray];
+    if (num === 0) {
+      for (let i = 0; i < newPencilCellArray.length; i++) {
+        newPencilCellArray[i] = 0;
+      }
+    } else {
+      newPencilCellArray[num - 1] =
+        newPencilCellArray[num - 1] === num ? 0 : num;
+    }
+    setPencilCellArray(newPencilCellArray);
+  };
+
+  const handleNormalMode = (num, row, col) => {
+    resetPencilArray();
+    const newBoard = copyBoard(board);
+    console.log("pressed ", num);
+
+    if (board[row][col] === num || num === 0) {
+      newBoard[row][col] = 0;
+      sounds.playErase();
+    } else {
+      newBoard[row][col] = num;
+      solutionBoard[row][col] === num
+        ? sounds.playCorrect()
+        : sounds.playWrong();
+    }
+    updateBoard(newBoard);
+  };
 
   const isBorderRight = colIndex % 3 === 2 && colIndex !== 8;
   const isBorderBottom = rowIndex % 3 === 2 && rowIndex !== 8;
@@ -80,42 +98,43 @@ useEffect(() => {
   const isIncorrectFill =
     isFillable && num && !isValidMove(board, num, rowIndex, colIndex);
 
-  return (pencilMode && isThisSelected) || showHighlightCell ? (
+  return (
     <div
       className={classNames(
-        "highlight-cell",
-        isBorderRight && "border-r",
-        isBorderBottom && "border-b",
-        isThisSelected && "selected-cell"
-      )}
-      onClick={handlePencilInput}
-    >
-      {pencilArray.map((val, index) => {
-        return (
-          <div className="highlight-sub-cell" key={index}>
-            {val || ' '}
-          </div>
-        );
-      })}
-    </div>
-  ) : (
-    <input
-      type="number"
-      value={num || ""}
-      onClick={() => isFillable && updateSelectedCell(rowIndex, colIndex)}
-      className={classNames(
         "sudoku-cell",
-        isFillable && "fillable-cell",
-        isThisSelected && "selected-cell",
         isBorderRight && "border-r",
         isBorderBottom && "border-b",
+        isThisSelected && "selected-cell",
         isIncorrectMove && "bg-incorrect",
-        isIncorrectFill && "bg-incorrect"
+        isIncorrectFill && "bg-incorrect",
+        " "
       )}
-      min="1"
-      max="9"
-      readOnly
-    />
+      onClick={() => isFillable && updateSelectedCell(rowIndex, colIndex)}
+    >
+      {showPencilCell ? (
+        <div className="pencil-cell">
+          {pencilCellArray.map((val, index) => (
+            <div className="pencil-sub-cell" key={index}>
+              {val || " "}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <input
+          type="number"
+          value={num || ""}
+          min={1}
+          max={9}
+          readOnly
+          className={classNames(
+            "cell-number",
+            isIncorrectMove && "bg-incorrect-move",
+            isIncorrectFill && "bg-incorrect",
+            isFillable && "fillable-cell"
+          )}
+        />
+      )}
+    </div>
   );
 };
 

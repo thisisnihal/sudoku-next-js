@@ -1,17 +1,17 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
 :root {
-  --cell-border-color: #888;
+  --cell-color: white;
+  --cell-border-color: #888888;
   --sudoku-board-border-color: #000;
   --subgrid3x3-border-color: #2e2e22;
-  --alternate-cell-color: #9ddfe8;
+  --alternate-cell-color: transparent;
   --selected-cell-color: rgb(142, 216, 147);
   --fillable-cell-color: rgb(106, 106, 222);
-
   --btn-bg-color: #f0f0f0;
   --btn-border-color: #888;
   --btn-hover-color: #ddd;
   --btn-active-color: #ffffff;
-
   --incorrect-color: #ff8585;
 }
 
@@ -20,15 +20,16 @@
 }
 
 .sudoku-board {
+  z-index: 10;
   display: grid;
-  grid-template-columns: repeat(9, 40px); /* Adjust width as needed */
-  grid-template-rows: repeat(9, 40px); /* Adjust height as needed */
+  grid-template-columns: repeat(9, 40px);
+  grid-template-rows: repeat(9, 40px);
   background-color: transparent;
-  border: 3px solid var(--sudoku-board-border-color);
+  border: 2px solid var(--sudoku-board-border-color);
   overflow: hidden;
   opacity: 0;
   transform: scale(0.2);
-  animation: showBoard 1s forwards 1s;
+  animation: showBoard 0.5s forwards 0.5s;
 }
 
 @keyframes showBoard {
@@ -39,39 +40,19 @@
 }
 
 .sudoku-cell {
+  z-index: 100;
   font-family: "Poppins";
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+  display: inline-block;
+
   font-weight: 400;
   font-size: 1.28rem;
-  width: 100%;
-  height: 100%;
-  background-color: #fff; /* Background color for cells */
-  border: 0.7px solid var(--cell-border-color); /* Border around cells */
+  background-color: var(--cell-color);
+  border: 1px solid var(--cell-border-color);
 }
 
-.border-r {
-  z-index: 100;
-  border-right: 3px solid var(--subgrid3x3-border-color);
-}
-
-.border-b {
-  z-index: 100;
-  border-bottom: 3px solid var(--subgrid3x3-border-color);
-}
-
-.sudoku-board .sudoku-cell.fillable-cell {
-  /* background-color: #7ebdcd; */
+.sudoku-board .sudoku-cell .fillable-cell {
   color: var(--fillable-cell-color);
 }
-
-/* .sudoku-board .sudoku-cell.fillable-cell:focus {
-  background-color: rgb(142, 216, 147);
-  outline: transparent;
-  caret-color: transparent;
-} */
 
 .sudoku-board > .sudoku-cell:nth-child(even) {
   background-color: var(--alternate-cell-color);
@@ -88,9 +69,16 @@
   background-color: var(--incorrect-color);
 }
 
+.sudoku-board .sudoku-cell.bg-incorrect-move {
+  background-color: #00fafe;
+  border: 2px solid rgb(81, 0, 255);
+  transition: border 1s;
+}
+
 .number-pad {
   display: flex;
-  margin-top: 20px; /* Adjust margin as needed */
+  margin-top: 20px;
+  justify-content: space-evenly;
 }
 
 .number-button {
@@ -120,11 +108,12 @@
 .number-button.highlightactive {
   background-color: #8cc9e3;
 }
+
 .number-button:active {
   background-color: var(--btn-active-color);
 }
 
-.highlight-cell {
+.pencil-cell {
   z-index: -10;
   width: 100%;
   height: 100%;
@@ -132,12 +121,12 @@
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
   place-items: center;
-  padding: 1px;
-  /* border: 0.7px solid var(--cell-border-color); */
+  padding: 0.8px;
+  background-color: transparent;
+  border: 0px solid var(--cell-border-color);
 }
 
-.highlight-sub-cell {
-
+.pencil-sub-cell {
   font-family: "Poppins";
   display: flex;
   justify-content: center;
@@ -149,14 +138,21 @@
   width: 100%;
   height: 100%;
   color: #000000a1;
-  /* border: 1px solid red; */
 }
 
-.highlight-cell.selected-cell {
+.pencil-cell.selected-cell {
   background-color: var(--selected-cell-color);
   border: 2px solid rgb(168, 183, 169);
   outline: transparent;
   caret-color: transparent;
+}
+
+.border-r {
+  border-right: 2px solid var(--subgrid3x3-border-color);
+}
+
+.border-b {
+  border-bottom: 2px solid var(--subgrid3x3-border-color);
 }
 
 input::-webkit-outer-spin-button,
@@ -164,10 +160,18 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
 input:focus {
   outline: transparent;
 }
-/* Firefox */
+
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+.cell-number {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  background-color: transparent;
 }

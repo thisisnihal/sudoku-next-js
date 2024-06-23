@@ -4,7 +4,7 @@ import { Providers } from "./providers";
 export default function Home() {
  return (
   <>
-  {children}
+  Hii Nextjs is running 
   </>
  );
 }

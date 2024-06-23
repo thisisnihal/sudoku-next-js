@@ -9,12 +9,16 @@ import UtilButtons from "./UtilButtons";
 
 function GamePage({ params }) {
   const { roomId } = params;
-  const { setInitialBoard, setBoard, setSolutionBoard } = useSudoku();
+  const { setFillable, setBoard, setSolutionBoard } = useSudoku();
 
   useEffect(() => {
     const [initialBoard, solvedBoard] = generateSudoku(parseInt(roomId, 10));
-    setInitialBoard(initialBoard);
     setBoard(initialBoard);
+
+    const fillableArray = initialBoard.map((row, rowIndex) =>
+      row.map((num, colIndex) => num === 0)
+    );
+    setFillable(fillableArray);
     setSolutionBoard(solvedBoard);
   }, [roomId]);
 
