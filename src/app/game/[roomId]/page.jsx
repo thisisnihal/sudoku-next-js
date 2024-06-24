@@ -23,7 +23,7 @@ function GamePage({ params }) {
   }, [roomId]);
 
   return (
-    <div className="w-screen h-screen p-1 bg-white flex flex-col justify-center items-center">
+    <div className="w-full h-full p-1 bg-white flex flex-col justify-center items-center">
       <SudokuBoard />
       <UtilButtons />
       <NumberPad />

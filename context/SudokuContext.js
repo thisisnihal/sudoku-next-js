@@ -1,5 +1,5 @@
 // Create a context for Sudoku game state
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 const SudokuContext = createContext();
 
@@ -9,6 +9,9 @@ export const SudokuProvider = ({ children }) => {
   const [solutionBoard, setSolutionBoard] = useState([]);
   const [selectedCell, setSelectedCell] = useState(null);
   const [pencilMode, setPencilMode] = useState(false);
+
+  const [gameWin, setGameWin] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
 
   const togglePencilMode = () => setPencilMode((prev) => !prev);
 
@@ -50,6 +53,11 @@ export const SudokuProvider = ({ children }) => {
     PressedNumber,
     getPressedNumber,
     updatePressedNumber,
+
+    gameWin,
+    setGameWin,
+    gameOver,
+    setGameOver,
   };
 
   return (

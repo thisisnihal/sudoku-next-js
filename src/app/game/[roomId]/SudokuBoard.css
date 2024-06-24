@@ -3,10 +3,11 @@
 :root {
   --cell-color: white;
   --cell-border-color: #888888;
+  --highlightcell-color: #e3f5ff; 
   --sudoku-board-border-color: #000;
   --subgrid3x3-border-color: #2e2e22;
   --alternate-cell-color: transparent;
-  --selected-cell-color: rgb(142, 216, 147);
+  --selected-cell-color: rgba(142, 194, 216, 0.816);
   --fillable-cell-color: rgb(106, 106, 222);
   --btn-bg-color: #f0f0f0;
   --btn-border-color: #888;
@@ -39,16 +40,22 @@
   }
 }
 
+
+
+
 .sudoku-cell {
   z-index: 100;
   font-family: "Poppins";
   display: inline-block;
-
   font-weight: 400;
   font-size: 1.28rem;
   background-color: var(--cell-color);
   border: 1px solid var(--cell-border-color);
+  cursor: pointer;
 }
+
+
+
 
 .sudoku-board .sudoku-cell .fillable-cell {
   color: var(--fillable-cell-color);
@@ -57,6 +64,22 @@
 .sudoku-board > .sudoku-cell:nth-child(even) {
   background-color: var(--alternate-cell-color);
 }
+
+
+
+.sudoku-board .sudoku-cell.highlightcell {
+  background-color: var(--highlightcell-color);
+}
+
+@media (hover: hover) {
+  .sudoku-board .sudoku-cell:hover {
+    background-color: var(--selected-cell-color);
+    border: 1px solid rgb(69, 69, 69);
+    outline: transparent;
+    caret-color: transparent;
+  }
+}
+
 
 .sudoku-board .sudoku-cell.selected-cell {
   background-color: var(--selected-cell-color);
@@ -74,6 +97,9 @@
   border: 2px solid rgb(81, 0, 255);
   transition: border 1s;
 }
+
+
+
 
 .number-pad {
   display: flex;
@@ -142,7 +168,7 @@
 
 .pencil-cell.selected-cell {
   background-color: var(--selected-cell-color);
-  border: 2px solid rgb(168, 183, 169);
+  border: 2px solid rgb(12, 12, 12);
   outline: transparent;
   caret-color: transparent;
 }
@@ -174,4 +200,5 @@ input[type="number"] {
   height: 100%;
   text-align: center;
   background-color: transparent;
+  cursor: pointer;
 }

@@ -27,7 +27,6 @@ function UtilButtons() {
       fillable[selectedCell.row][selectedCell.col]
     ) {
       updatePressedNumber(0);
-      console.log("erased");
     }
 
     setPencilMode(false);

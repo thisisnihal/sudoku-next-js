@@ -37,6 +37,7 @@ export function dependentCells(row, col) {
   );
 
   const BOARD_SIZE = 9;
+  if (row === undefined || col === undefined) return dependentCellsArray;
   for (let i = 0; i < BOARD_SIZE; i++) {
     dependentCellsArray[i][col] = true;
     dependentCellsArray[row][i] = true;
@@ -50,8 +51,10 @@ export function dependentCells(row, col) {
     }
   }
   dependentCellsArray[row][col] = false;
+
   return dependentCellsArray;
 }
+
 
 function isValid(board, row, col, num) {
   for (let i = 0; i < 9; ++i) {
@@ -71,7 +74,8 @@ function isValid(board, row, col, num) {
   return true;
 }
 
-function findEmptyLocation(board) {
+export function findEmptyLocation(board) {
+  
   for (let i = 0; i < 9; ++i) {
     for (let j = 0; j < 9; ++j) {
       if (board[i][j] === 0) {
@@ -183,7 +187,7 @@ function removeNumbers(board, difficulty) {
 }
 
 export function generateSudoku(difficulty) {
-  if (difficulty > 60) difficulty = 60;
+  if (difficulty >= 64) difficulty = 63;
 
   const fullBoard = generateFullSudoku();
   const solvedBoard = fullBoard.map((row) => [...row]);
@@ -238,3 +242,14 @@ export const sounds = (() => {
     playErase,
   };
 })();
+
+export function checkWin(currentBoard, solutionBoard) {
+  if (currentBoard.length !== solutionBoard.length) return false;
+  for (let i = 0; i < currentBoard.length; i++) {
+    if (currentBoard[i].length !== solutionBoard[i].length) return false;
+    for (let j = 0; j < currentBoard[i].length; j++) {
+      if (currentBoard[i][j] !== solutionBoard[i][j]) return false;
+    }
+  }
+  return true;
+}
