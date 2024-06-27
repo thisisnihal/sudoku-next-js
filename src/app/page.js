@@ -10,12 +10,12 @@ function getRandomInt(min, max) {
 
 async function fetchOptions() {
   const options = {
-    Easy: getRandomInt(5, 15),
-    Medium: getRandomInt(10, 20),
-    Hard: getRandomInt(15, 25),
-    "Candidate Master": getRandomInt(20, 30),
-    Master: getRandomInt(25, 35),
-    "Grand Master": getRandomInt(30, 40),
+    "Easy": getRandomInt(5, 15),
+    "Medium": getRandomInt(15, 30),
+    "Hard": getRandomInt(31, 45),
+    "Candidate Master": getRandomInt(46, 55),
+    "Master": getRandomInt(56, 60),
+    "Grand Master": getRandomInt(61, 63),
   };
 
   return options;
